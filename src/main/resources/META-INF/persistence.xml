@@ -1,0 +1,20 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.2">
+    <persistence-unit name="ltalk">
+        <class>com.ltalk.entity.Member</class>
+        <class>com.ltalk.entity.Friend</class>
+        <class>com.ltalk.entity.Chat</class><!-- 엔티티 클래스 추가 -->
+        <class>com.ltalk.entity.ChatRoom</class>
+        <class>com.ltalk.entity.ChatRoomMember</class>
+        <class>com.ltalk.entity.Message</class>
+        <properties>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ltalk" />
+            <property name="jakarta.persistence.jdbc.user" value="root" />
+            <property name="jakarta.persistence.jdbc.password" value="123456" />
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect" />
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
