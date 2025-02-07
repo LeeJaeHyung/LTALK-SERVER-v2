@@ -1,6 +1,5 @@
 package com.ltalk.server.view.controller;
 
-import com.ltalk.server.Main;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,7 +9,6 @@ import javafx.scene.control.TextArea;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static com.ltalk.server.controller.ServerController.shutdownServer;
 import static com.ltalk.server.controller.ServerController.startServer;
 
 public class MainViewController implements Initializable {
@@ -22,6 +20,7 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1)  {
+
     }
 
     public void buttonClick() {
@@ -35,7 +34,6 @@ public class MainViewController implements Initializable {
             }
         }else {
             try {
-                shutdownServer();
                 button.setText("Start");
                 textArea.appendText("[Server]-> Stop\n");
             }catch(Exception e) {
