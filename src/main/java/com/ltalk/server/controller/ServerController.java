@@ -85,6 +85,7 @@ public class ServerController {
             int bytesRead = clientChannel.read(buffer);
 
             if (bytesRead == -1) {
+                key.cancel();  // Selector에서 해당 키 제거
                 clientChannel.close();
                 control.addText("클라이언트 연결 종료");
                 return;
