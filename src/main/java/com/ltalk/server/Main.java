@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import static com.ltalk.server.controller.ServerController.shutdownServer;
 
 public class Main extends Application {
 
@@ -32,7 +31,7 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("종료 됨");
-            shutdownServer(); // 서버 종료 처리
+//            shutdownServer(); // 서버 종료 처리
         });
         server = new ServerController();
         primaryStage.show();
@@ -40,7 +39,7 @@ public class Main extends Application {
 
     @Override
     public void stop() throws Exception {
-        shutdownServer(); // 서버 종료
+//        shutdownServer(); // 서버 종료
         super.stop();
     }
 
