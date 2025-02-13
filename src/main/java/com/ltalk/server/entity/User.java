@@ -1,6 +1,6 @@
 package com.ltalk.server.entity;
 
-import com.ltalk.enums.UserRole;
+import com.ltalk.server.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

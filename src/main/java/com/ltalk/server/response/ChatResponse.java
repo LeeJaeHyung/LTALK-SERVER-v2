@@ -1,6 +1,6 @@
 package com.ltalk.server.response;
 
-import com.ltalk.request.ChatRequest;
+import com.ltalk.server.request.ChatRequest;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

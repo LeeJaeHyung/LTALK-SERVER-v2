@@ -1,6 +1,6 @@
 package com.ltalk.server.entity;
 
-import com.ltalk.enums.FriendStatus;
+import com.ltalk.server.enums.FriendStatus;
 import lombok.Getter;
 
 import javax.persistence.*;

@@ -1,9 +1,9 @@
 package com.ltalk.server.entity;
 
-import com.ltalk.enums.ProtocolType;
-import com.ltalk.response.ChatResponse;
-import com.ltalk.response.LoginResponse;
-import com.ltalk.response.SignupResponse;
+import com.ltalk.server.enums.ProtocolType;
+import com.ltalk.server.response.ChatResponse;
+import com.ltalk.server.response.LoginResponse;
+import com.ltalk.server.response.SignupResponse;
 import lombok.Getter;
 
 @Getter
