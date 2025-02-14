@@ -3,12 +3,12 @@ package com.ltalk.server.handler;
 import com.ltalk.server.Main;
 import com.ltalk.server.controller.ServerController;
 import com.ltalk.server.entity.Client;
-
 import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 import static com.ltalk.server.Main.viewController;
+import static com.ltalk.server.controller.ServerController.clients;
 import static com.ltalk.server.controller.ServerController.serverSocketChannel;
 
 public class ConnectionHandler implements CompletionHandler<AsynchronousSocketChannel, Void> {
@@ -27,6 +27,8 @@ public class ConnectionHandler implements CompletionHandler<AsynchronousSocketCh
             // 새로운 클라이언트 객체 생성 및 저장
             Client client = new Client(socketChannel);
             ServerController.clients.put(clientAddress, client);
+            viewController.addText("참여 인원 : "+clients.mappingCount());
+
 
         } catch (IOException e) {
             viewController.addText("클라이언트 주소를 가져오는 도중 오류 발생: " + e.getMessage());
