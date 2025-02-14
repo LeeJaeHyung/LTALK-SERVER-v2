@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static com.ltalk.server.controller.ServerController.startServer;
+import static com.ltalk.server.controller.ServerController.stopServer;
 
 public class MainViewController implements Initializable {
 
@@ -34,6 +35,7 @@ public class MainViewController implements Initializable {
             }
         }else {
             try {
+                stopServer();
                 button.setText("Start");
                 textArea.appendText("[Server]-> Stop\n");
             }catch(Exception e) {
@@ -44,9 +46,16 @@ public class MainViewController implements Initializable {
     }
 
     public void addText(String text) {
+        if(textArea==null){
+            return;
+        }
         Platform.runLater(()->{
             textArea.appendText(text+"\n");
         });
+    }
+
+    public void clearText(){
+        textArea.clear();
     }
 
 }

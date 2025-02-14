@@ -9,10 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import static com.ltalk.server.controller.ServerController.stopServer;
+
 
 public class Main extends Application {
 
-    public static MainViewController control;
+    public static MainViewController viewController;
     public static ServerController server;
     public static void main(String[] args) {
         launch(args);
@@ -23,7 +25,7 @@ public class Main extends Application {
         System.out.println("[" + Thread.currentThread().getName() + "] on start()");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ServerMain.fxml"));
         Parent parent = loader.load();
-        control = loader.getController();
+        viewController = loader.getController();
         Scene scene = new Scene(parent);
         primaryStage.setScene(scene);
         primaryStage.setTitle("LTalk-Sever");
@@ -31,7 +33,7 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("종료 됨");
-//            shutdownServer(); // 서버 종료 처리
+            stopServer(); // 서버 종료 처리
         });
         server = new ServerController();
         primaryStage.show();
@@ -39,7 +41,7 @@ public class Main extends Application {
 
     @Override
     public void stop() throws Exception {
-//        shutdownServer(); // 서버 종료
+        stopServer(); // 서버 종료
         super.stop();
     }
 
