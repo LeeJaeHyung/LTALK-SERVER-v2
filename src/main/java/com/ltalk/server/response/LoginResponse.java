@@ -1,6 +1,6 @@
 package com.ltalk.server.response;
 
-import com.ltalk.entity.Member;
+import com.ltalk.server.entity.Member;
 import lombok.Getter;
 
 @Getter
