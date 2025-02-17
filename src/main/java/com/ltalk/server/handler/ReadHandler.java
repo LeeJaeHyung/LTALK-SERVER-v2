@@ -1,8 +1,10 @@
 package com.ltalk.server.handler;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.ltalk.server.entity.Data;
 import com.ltalk.server.service.DataService;
+import com.ltalk.server.util.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -10,10 +12,13 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 
 public class ReadHandler implements CompletionHandler<Integer, ByteBuffer> {
     private final AsynchronousSocketChannel socketChannel;
-    private static final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     private DataService dataService;
 
     public ReadHandler(AsynchronousSocketChannel socketChannel) {
@@ -29,6 +34,7 @@ public class ReadHandler implements CompletionHandler<Integer, ByteBuffer> {
         }
         buffer.flip();
         String receivedJson = StandardCharsets.UTF_8.decode(buffer).toString();
+        System.out.println(receivedJson);
         Data data = gson.fromJson(receivedJson, Data.class);
         try {
             dataService = new DataService(socketChannel,data);// 데이터 서비스를 생성과 동시에 interpret()동작

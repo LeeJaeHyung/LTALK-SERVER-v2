@@ -1,10 +1,8 @@
 package com.ltalk.server.service;
 
-import com.ltalk.server.entity.Friend;
-import com.ltalk.server.entity.Member;
-import com.ltalk.server.entity.ServerResponse;
-import com.ltalk.server.entity.User;
+import com.ltalk.server.entity.*;
 import com.ltalk.server.enums.ProtocolType;
+import com.ltalk.server.enums.UserRole;
 import com.ltalk.server.repository.MemberRepository;
 import com.ltalk.server.response.LoginResponse;
 import com.ltalk.server.response.SignupResponse;
@@ -13,6 +11,8 @@ import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
+
+import static com.ltalk.server.controller.ServerController.clients;
 
 public class MemberService {
     MemberRepository memberRepository;
@@ -64,6 +64,11 @@ public class MemberService {
                 for(Friend friend : freindSet){
                     System.out.println(friend.getFriend().getUsername());
                 }
+                Client client = clients.get(socketChannel.getRemoteAddress().toString());
+                client.setMember(targetMember);//멤버셋팅
+                client.setUserRole(UserRole.USER);//유저 권한 변경
+                clients.remove(socketChannel.getRemoteAddress().toString());//클라이언트 제거
+                clients.put(targetMember.getUsername(), client);//변경된 클라이언트 추가
                 System.out.println("로그인 성공 전송");
                 return new ServerResponse(ProtocolType.LOGIN, true, new LoginResponse(member, "로그인 성공"));
             }else{
