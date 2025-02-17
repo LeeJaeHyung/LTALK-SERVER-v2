@@ -40,8 +40,9 @@ public class DataService {
     private void chat(){
 
     }
-    private void signup(){
-
+    private void signup() throws NoSuchAlgorithmException, IOException {
+        memberService = new MemberService(socketChannel);
+        memberService.signup(new Member(data.getSignupRequest()));
     }
 
     private void send(){
