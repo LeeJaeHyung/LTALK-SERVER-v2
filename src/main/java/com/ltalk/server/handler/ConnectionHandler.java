@@ -38,6 +38,8 @@ public class ConnectionHandler implements CompletionHandler<AsynchronousSocketCh
         } finally {
             // 서버가 실행 중일 때만 accept() 호출
             if (ServerController.isRunning) {
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                socketChannel.read(buffer, buffer, new ReadHandler(socketChannel));// 해당 클라이언트의 데이터 수신 시작
                 serverSocketChannel.accept(null, this);
             } else {
                 viewController.addText("서버가 종료 상태이므로 새로운 클라이언트 요청을 받지 않습니다.");
