@@ -14,11 +14,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 
+import static com.ltalk.server.service.DataService.gson;
+
 public class ReadHandler implements CompletionHandler<Integer, ByteBuffer> {
     private final AsynchronousSocketChannel socketChannel;
-    private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .create();
     private DataService dataService;
 
     public ReadHandler(AsynchronousSocketChannel socketChannel) {
