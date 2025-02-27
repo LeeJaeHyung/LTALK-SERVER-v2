@@ -1,13 +1,8 @@
 package com.ltalk.server.handler;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.ltalk.server.util.LocalDateTimeAdapter;
-
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
-import java.time.LocalDateTime;
 
 public class WriteHandler implements CompletionHandler<Integer, ByteBuffer> {
     private final AsynchronousSocketChannel socketChannel;
