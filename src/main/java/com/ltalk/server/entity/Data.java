@@ -1,9 +1,7 @@
 package com.ltalk.server.entity;
 
 import com.ltalk.server.enums.ProtocolType;
-import com.ltalk.server.request.ChatRequest;
-import com.ltalk.server.request.LoginRequest;
-import com.ltalk.server.request.SignupRequest;
+import com.ltalk.server.request.*;
 import lombok.Getter;
 
 @Getter
@@ -12,5 +10,7 @@ public class Data {
     ChatRequest chatRequest;
     LoginRequest loginRequest;
     SignupRequest signupRequest;
+    DisconnectRequest disconnectRequest;
+    FriendRequest friendRequest;
     String username;
 }

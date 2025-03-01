@@ -27,6 +27,7 @@ public class MemberRepository {
         }
         return true;
     }
+
     public void update(Member member) {
         EntityManager em = JpaUtil.getEntityManager();
         try {

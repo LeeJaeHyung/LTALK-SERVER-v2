@@ -1,6 +1,7 @@
 package com.ltalk.server.entity;
 
 
+import com.google.gson.annotations.Expose;
 import com.ltalk.server.config.PasswordEncoder;
 import com.ltalk.server.request.LoginRequest;
 import com.ltalk.server.request.SignupRequest;
@@ -36,6 +37,7 @@ public class Member {
     private Set<ChatRoomMember> chatRooms = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Expose
     private Set<Friend> friends = new HashSet<>();
 
     public Member(SignupRequest request) throws NoSuchAlgorithmException {

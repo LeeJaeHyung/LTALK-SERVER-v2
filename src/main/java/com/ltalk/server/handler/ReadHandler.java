@@ -51,6 +51,7 @@ public class ReadHandler implements CompletionHandler<Integer, ByteBuffer> {
         try {
             System.out.println("[서버] 클라이언트 연결 종료: " + socketChannel.getRemoteAddress());
             socketChannel.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

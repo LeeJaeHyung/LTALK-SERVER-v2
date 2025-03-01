@@ -28,6 +28,7 @@ public class ConnectionHandler implements CompletionHandler<AsynchronousSocketCh
             // 새로운 클라이언트 객체 생성 및 저장
             Client client = new Client(socketChannel);
             ServerController.clients.put(clientAddress, client);
+            System.out.println("key : " + clientAddress);
             viewController.addText("참여 인원 : "+clients.mappingCount());
 
 

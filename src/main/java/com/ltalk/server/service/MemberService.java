@@ -10,6 +10,8 @@ import com.ltalk.server.response.SignupResponse;
 import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static com.ltalk.server.controller.ServerController.clients;
@@ -61,8 +63,12 @@ public class MemberService {
             if(targetMember.getPassword().equals(member.getPassword())){
                 System.out.println("비밀번호 일치");
                 Set<Friend> freindSet = targetMember.getFriends();
+                List<String> friendList = new ArrayList<>() ;
+
                 for(Friend friend : freindSet){
+                    System.out.println("친구 있음");
                     System.out.println(friend.getFriend().getUsername());
+                    friendList.add(friend.getFriend().getUsername());
                 }
                 Client client = clients.get(socketChannel.getRemoteAddress().toString());
                 client.setMember(targetMember);//멤버셋팅
@@ -70,7 +76,7 @@ public class MemberService {
                 clients.remove(socketChannel.getRemoteAddress().toString());//클라이언트 제거
                 clients.put(targetMember.getUsername(), client);//변경된 클라이언트 추가
                 System.out.println("로그인 성공 전송");
-                return new ServerResponse(ProtocolType.LOGIN, true, new LoginResponse(member, "로그인 성공"));
+                return new ServerResponse(ProtocolType.LOGIN, true, new LoginResponse(member, friendList, "로그인 성공"));
             }else{
                 System.out.println("비밀 번호 불일치");
                 return new ServerResponse(ProtocolType.LOGIN, false, new LoginResponse("비밀번호를 확인해 주세요"));
@@ -81,4 +87,15 @@ public class MemberService {
         }
     }
 
+    public Member findByUserName(String username){
+        return memberRepository.findByUserName(username);
+    }
+
+    public void save(Member member){
+        memberRepository.save(member);
+    }
+
+    public void update(Member member) {
+        memberRepository.update(member);
+    }
 }
