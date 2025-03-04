@@ -1,15 +1,20 @@
 package com.ltalk.server.entity;
 
+import com.ltalk.server.enums.ChatRoomType;
+import com.ltalk.server.request.ChatRoomCreatRequest;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "chat_rooms")
 public class ChatRoom {
 
@@ -20,6 +25,10 @@ public class ChatRoom {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
+    @Column(nullable = false, length = 10)
+    private ChatRoomType type; // 채팅방 타입 (PRIVATE / GROUP)
+
     @Column(nullable = false)
     private Integer participantCount = 0;
 
@@ -29,12 +38,18 @@ public class ChatRoom {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDateTime lastChattedAt;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomMember> members;
 
+    public ChatRoom(ChatRoomCreatRequest chatRoomCreatRequest) {
+      this.type = chatRoomCreatRequest.getRoomType();
+      this.name = chatRoomCreatRequest.getRoomName();
+      this.members = new ArrayList<>();
+      this.participantCount = 0;
+    }
 
     @PrePersist
     protected void onCreate() {

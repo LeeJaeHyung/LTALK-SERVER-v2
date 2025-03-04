@@ -64,12 +64,21 @@ public class MemberService {
                 System.out.println("비밀번호 일치");
                 Set<Friend> freindSet = targetMember.getFriends();
                 List<String> friendList = new ArrayList<>() ;
-
                 for(Friend friend : freindSet){
                     System.out.println("친구 있음");
                     System.out.println(friend.getFriend().getUsername());
                     friendList.add(friend.getFriend().getUsername());
                 }
+                Set<ChatRoomMember> chatRooms = targetMember.getChatRooms();
+                for(ChatRoomMember chatRoomMember : chatRooms){
+                    System.out.println("채팅방 존재");
+                    System.out.println(chatRoomMember.getChatRoomMemberId());
+                    ChatRoom chatRoom = chatRoomMember.getChatRoom();
+                    System.out.println(chatRoom.getChatRoomId());
+                    System.out.println(chatRoom.getName());
+                }
+
+
                 Client client = clients.get(socketChannel.getRemoteAddress().toString());
                 client.setMember(targetMember);//멤버셋팅
                 client.setUserRole(UserRole.USER);//유저 권한 변경

@@ -31,6 +31,7 @@ public class DataService {
     private final AsynchronousSocketChannel socketChannel;
     private MemberService memberService;
     private FriendService  friendService;
+    private ChatService chatService;
     public static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
@@ -48,7 +49,13 @@ public class DataService {
             case SIGNUP -> signup();
             case DISCONNECT -> disconnect();
             case REQUEST_FRIEND -> requestFriend();
+            case CREATE_CHATROOM -> creatChatRoom();
         }
+    }
+
+    private void creatChatRoom() {
+        chatService = new ChatService(socketChannel);
+        chatService.creatChatRoom(data.getChatRoomCreatRequest());
     }
 
     private void requestFriend() {
@@ -88,7 +95,8 @@ public class DataService {
         send(loginResponse);
     }
     private void chat(){
-
+        chatService = new ChatService(socketChannel);
+        chatService.chat(data.getChatRequest());
     }
     private void signup() throws NoSuchAlgorithmException, IOException {
         memberService = new MemberService(socketChannel);

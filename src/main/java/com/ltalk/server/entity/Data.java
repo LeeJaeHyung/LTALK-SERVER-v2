@@ -12,5 +12,6 @@ public class Data {
     SignupRequest signupRequest;
     DisconnectRequest disconnectRequest;
     FriendRequest friendRequest;
+    ChatRoomCreatRequest chatRoomCreatRequest;
     String username;
 }
