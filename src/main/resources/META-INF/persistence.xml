@@ -5,7 +5,6 @@
         <class>com.ltalk.server.entity.Chat</class><!-- 엔티티 클래스 추가 -->
         <class>com.ltalk.server.entity.ChatRoom</class>
         <class>com.ltalk.server.entity.ChatRoomMember</class>
-        <class>com.ltalk.server.entity.Message</class>
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ltalk" />
             <property name="jakarta.persistence.jdbc.user" value="root" />

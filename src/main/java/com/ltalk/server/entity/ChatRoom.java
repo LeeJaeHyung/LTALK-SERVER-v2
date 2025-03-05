@@ -9,7 +9,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -41,13 +43,17 @@ public class ChatRoom {
     @Column()
     private LocalDateTime lastChattedAt;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatRoomMember> members;
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.EAGER)
+    private Set<ChatRoomMember> members;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Chat> chats = new HashSet<>();
+
 
     public ChatRoom(ChatRoomCreatRequest chatRoomCreatRequest) {
       this.type = chatRoomCreatRequest.getRoomType();
       this.name = chatRoomCreatRequest.getRoomName();
-      this.members = new ArrayList<>();
+      this.members = new HashSet<>();
       this.participantCount = 0;
     }
 

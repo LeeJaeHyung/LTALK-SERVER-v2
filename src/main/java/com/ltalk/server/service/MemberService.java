@@ -1,5 +1,7 @@
 package com.ltalk.server.service;
 
+import com.ltalk.server.dto.ChatRoomDTO;
+import com.ltalk.server.dto.FriendDTO;
 import com.ltalk.server.entity.*;
 import com.ltalk.server.enums.ProtocolType;
 import com.ltalk.server.enums.UserRole;
@@ -62,20 +64,22 @@ public class MemberService {
             System.out.println("타겟 멤버 가져옴");
             if(targetMember.getPassword().equals(member.getPassword())){
                 System.out.println("비밀번호 일치");
-                Set<Friend> freindSet = targetMember.getFriends();
-                List<String> friendList = new ArrayList<>() ;
-                for(Friend friend : freindSet){
+                Set<Friend> friendSet = targetMember.getFriends();
+                List<FriendDTO> friendList = new ArrayList<>() ;
+                for(Friend friend : friendSet){
                     System.out.println("친구 있음");
                     System.out.println(friend.getFriend().getUsername());
-                    friendList.add(friend.getFriend().getUsername());
+                    friendList.add(new FriendDTO(friend));
                 }
                 Set<ChatRoomMember> chatRooms = targetMember.getChatRooms();
+                List<ChatRoomDTO> chatList = new ArrayList<>();
                 for(ChatRoomMember chatRoomMember : chatRooms){
                     System.out.println("채팅방 존재");
                     System.out.println(chatRoomMember.getChatRoomMemberId());
                     ChatRoom chatRoom = chatRoomMember.getChatRoom();
                     System.out.println(chatRoom.getChatRoomId());
                     System.out.println(chatRoom.getName());
+                    chatList.add(new ChatRoomDTO(chatRoom));
                 }
 
 
@@ -85,7 +89,7 @@ public class MemberService {
                 clients.remove(socketChannel.getRemoteAddress().toString());//클라이언트 제거
                 clients.put(targetMember.getUsername(), client);//변경된 클라이언트 추가
                 System.out.println("로그인 성공 전송");
-                return new ServerResponse(ProtocolType.LOGIN, true, new LoginResponse(member, friendList, "로그인 성공"));
+                return new ServerResponse(ProtocolType.LOGIN, true, new LoginResponse(member, friendList, chatList, "로그인 성공"));
             }else{
                 System.out.println("비밀 번호 불일치");
                 return new ServerResponse(ProtocolType.LOGIN, false, new LoginResponse("비밀번호를 확인해 주세요"));
