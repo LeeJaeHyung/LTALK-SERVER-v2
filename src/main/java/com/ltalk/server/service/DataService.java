@@ -109,6 +109,7 @@ public class DataService {
         System.out.println("[응답 전송 : "+json+"]");
         ByteBuffer responseBuffer = ByteBuffer.wrap(gson.toJson(response).getBytes(StandardCharsets.UTF_8));
         // 클라이언트에게 응답 전송
+        System.out.println("[응답 사이즈 : "+responseBuffer.capacity()+"]");
         socketChannel.write(responseBuffer, responseBuffer, new WriteHandler(socketChannel));
     }
 

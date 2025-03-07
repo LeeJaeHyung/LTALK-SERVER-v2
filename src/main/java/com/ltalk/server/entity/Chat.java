@@ -35,9 +35,11 @@ public class Chat {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-//    public Chat(ChatRequest request) {
-//
-//    }
+    public Chat(ChatRoom chatRoom, Member sender, String message) {
+        this.chatRoom = chatRoom;
+        this.sender = sender;
+        this.message = message;
+    }
 
     @PrePersist
     protected void onCreate() {

@@ -43,11 +43,11 @@ public class ChatRoom {
     @Column()
     private LocalDateTime lastChattedAt;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.LAZY)
     private Set<ChatRoomMember> members;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Chat> chats = new HashSet<>();
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Chat> chats = new ArrayList<>();
 
 
     public ChatRoom(ChatRoomCreatRequest chatRoomCreatRequest) {

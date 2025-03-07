@@ -20,6 +20,7 @@ public class ChatRoomDTO {
         lastChattedAt = chatRoom.getLastChattedAt();
         participantCount = chatRoom.getParticipantCount();
         chatRoom.getMembers().forEach(m -> members.add(new ChatRoomMemberDTO(m)));
+        chatRoom.getChats().forEach(c -> System.out.println(c.getChatId()));
         chatRoom.getChats().forEach(c -> chats.add(new ChatDTO(c)));
     }
 }

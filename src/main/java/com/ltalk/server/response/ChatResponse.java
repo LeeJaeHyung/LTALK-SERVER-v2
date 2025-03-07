@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ChatResponse {
-    private String receiver;
-    private String sender;
+    private Long chatRoomId;
+    private Long senderId;
     private String message;
     private LocalDateTime sendDate;
     public ChatResponse(ChatRequest chatRequest) {
-        this.receiver = null;//chatRequest.getReceiver();
-        this.sender = chatRequest.getSender();
+        this.chatRoomId = chatRequest.getChatRoomId();//chatRequest.getReceiver();
+        this.senderId = chatRequest.getSenderId();
         this.message = chatRequest.getMessage();
         this.sendDate = chatRequest.getSendDate();
     }

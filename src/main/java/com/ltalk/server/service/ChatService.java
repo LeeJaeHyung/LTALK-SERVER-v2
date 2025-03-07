@@ -1,8 +1,10 @@
 package com.ltalk.server.service;
 
+import com.ltalk.server.entity.Chat;
 import com.ltalk.server.entity.ChatRoom;
 import com.ltalk.server.entity.ChatRoomMember;
 import com.ltalk.server.entity.Member;
+import com.ltalk.server.repository.ChatRepository;
 import com.ltalk.server.repository.ChatRoomMemberRepository;
 import com.ltalk.server.repository.ChatRoomRepository;
 import com.ltalk.server.request.ChatRequest;
@@ -15,18 +17,27 @@ import java.util.List;
 public class ChatService {
 
     AsynchronousSocketChannel channel;
+    ChatRepository chatRepository;
     ChatRoomRepository chatRoomRepository;
     ChatRoomMemberRepository chatRoomMemberRepository;
+
     public ChatService(AsynchronousSocketChannel socketChannel) {
         channel = socketChannel;
+        this.chatRepository = new ChatRepository();
         this.chatRoomRepository = new ChatRoomRepository();
         this.chatRoomMemberRepository = new ChatRoomMemberRepository();
     }
 
 
     public void chat(ChatRequest chatRequest) {
-        String message = chatRequest.getMessage();
+        Member member = new MemberService(channel).findById(chatRequest.getSenderId());
+        ChatRoom chatRoom = new ChatService(channel).roomFindById(chatRequest.getChatRoomId());
+        Chat chat = new Chat(chatRoom, member, chatRequest.getMessage());
+        chatRepository.save(chat);
+    }
 
+    private ChatRoom roomFindById(Long chatRoomId) {
+        return chatRoomRepository.roomFindById(chatRoomId);
     }
 
     public void creatChatRoom(ChatRoomCreatRequest chatRoomCreatRequest){
