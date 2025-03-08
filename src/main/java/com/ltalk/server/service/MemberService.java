@@ -69,33 +69,20 @@ public class MemberService {
                 Set<Friend> friendSet = loginMember.getFriends();
                 List<FriendDTO> friendList = new ArrayList<>() ;
                 for(Friend friend : friendSet){
-                    System.out.println("친구 있음");
-                    System.out.println(friend.getFriend().getUsername());
                     friendList.add(new FriendDTO(friend));
                 }
                 Set<ChatRoomMember> chatRooms = loginMember.getChatRooms();
                 List<ChatRoomDTO> chatroomList = new ArrayList<>();
                 for(ChatRoomMember chatRoomMember : chatRooms){
-                    System.out.println("채팅방 존재");
-                    System.out.println(chatRoomMember.getChatRoomMemberId());
                     ChatRoom chatRoom = chatRoomMember.getChatRoom();
-                    System.out.println(chatRoom.getChatRoomId());
-                    System.out.println(chatRoom.getName());
-                    System.out.println("DTO전");
-                    for(Chat chats:chatRoom.getChats()){
-                        System.out.println(chats.getChatId());
-                    }
                     chatroomList.add(new ChatRoomDTO(chatRoom));
                 }
-
-
                 Client client = clients.get(socketChannel.getRemoteAddress().toString());
                 client.setMember(loginMember);//멤버셋팅
                 client.setUserRole(UserRole.USER);//유저 권한 변경
                 clients.remove(socketChannel.getRemoteAddress().toString());//클라이언트 제거
                 clients.put(loginMember.getUsername(), client);//변경된 클라이언트 추가
-
-                System.out.println("로그인 성공 전송");
+                System.out.println("로그인 성공 데이터 전송");
                 return new ServerResponse(ProtocolType.LOGIN, true, new LoginResponse(new MemberDTO(loginMember, friendList, chatroomList), "로그인 성공"));
             }else{
                 System.out.println("비밀 번호 불일치");

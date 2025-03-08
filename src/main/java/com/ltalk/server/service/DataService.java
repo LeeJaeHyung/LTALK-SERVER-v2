@@ -104,14 +104,25 @@ public class DataService {
         send(signupResponse);
     }
 
-    private void send(ServerResponse response){
+    private void send(ServerResponse response) {
         String json = gson.toJson(response);
-        System.out.println("[응답 전송 : "+json+"]");
-        ByteBuffer responseBuffer = ByteBuffer.wrap(gson.toJson(response).getBytes(StandardCharsets.UTF_8));
-        // 클라이언트에게 응답 전송
-        System.out.println("[응답 사이즈 : "+responseBuffer.capacity()+"]");
+        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+        int messageLength = jsonBytes.length;
+
+        // 전송할 데이터 크기 출력
+        System.out.println("[응답 전송 : " + json + "]");
+        System.out.println("[응답 사이즈 : " + messageLength + "]");
+
+        // 길이(4바이트) + JSON 데이터를 포함하는 ByteBuffer 생성
+        ByteBuffer responseBuffer = ByteBuffer.allocate(4 + messageLength);
+        responseBuffer.putInt(messageLength); // 4바이트 길이 정보 추가
+        responseBuffer.put(jsonBytes);        // 본문 데이터 추가
+        responseBuffer.flip(); // 버퍼를 읽을 수 있도록 준비
+
+        // 클라이언트에게 응답 전송 (길이 포함된 데이터)
         socketChannel.write(responseBuffer, responseBuffer, new WriteHandler(socketChannel));
     }
+
 
 
 

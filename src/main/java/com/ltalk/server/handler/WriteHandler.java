@@ -12,11 +12,13 @@ public class WriteHandler implements CompletionHandler<Integer, ByteBuffer> {
         this.socketChannel = socketChannel;
     }
 
+    @Override
     public void completed(Integer result, ByteBuffer buffer) {
         if (buffer.hasRemaining()) {
             socketChannel.write(buffer, buffer, this); // 남은 데이터가 있으면 계속 전송
         } else {
             System.out.println("[서버] 응답 전송 완료");
+            buffer.clear(); // 메모리 해제
         }
     }
 

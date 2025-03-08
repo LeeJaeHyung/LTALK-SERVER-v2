@@ -99,7 +99,7 @@ public class MemberRepository {
     public Member findMemberWithChatRooms(Long memberId) {
         EntityManager em = JpaUtil.getEntityManager();
 
-        // 🚀 `ChatRoom`만 먼저 조회 (chats는 별도로 가져옴)
+        // `ChatRoom`만 먼저 조회 (chats는 별도로 가져옴)
         String queryStr = "SELECT DISTINCT m FROM Member m " +
                 "JOIN FETCH m.chatRooms crm " +
                 "JOIN FETCH crm.chatRoom cr " +
@@ -110,13 +110,13 @@ public class MemberRepository {
         query.setParameter("memberId", memberId);
         Member member = query.getSingleResult();
 
-        // 🚀 각 `ChatRoom`의 최근 10개 메시지만 가져오기
+        // 각 `ChatRoom`의 최근 10개 메시지만 가져오기
         for (ChatRoom chatRoom : member.getChatRooms().stream().map(ChatRoomMember::getChatRoom).toList()) {
             List<Chat> recentChats = getRecentChatsForChatRoom(chatRoom.getChatRoomId(), em);
             for(Chat chats : recentChats) {
                 System.out.println(chats.getChatId());
             }
-            chatRoom.setChats(recentChats); // 🚀 최근 10개의 Chat만 설정
+            chatRoom.setChats(recentChats); // 최근 10개의 Chat만 설정
         }
 
         return member;
@@ -132,7 +132,7 @@ public class MemberRepository {
 
         TypedQuery<Chat> chatQuery = em.createQuery(chatQueryStr, Chat.class);
         chatQuery.setParameter("chatRoomId", chatRoomId);
-        chatQuery.setMaxResults(10); // 🚀 최신 10개 메시지만 가져오기
+        chatQuery.setMaxResults(10); //  최신 10개 메시지만 가져오기
 
         return chatQuery.getResultList();
     }
