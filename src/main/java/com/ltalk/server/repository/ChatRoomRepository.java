@@ -2,7 +2,7 @@ package com.ltalk.server.repository;
 
 import com.ltalk.server.entity.ChatRoom;
 import com.ltalk.server.entity.Friend;
-import com.ltalk.server.entity.Member;
+import com.ltalk.server.entity.ChatRoomMember;
 import com.ltalk.server.util.JpaUtil;
 
 import javax.persistence.EntityManager;
@@ -47,15 +47,24 @@ public class ChatRoomRepository {
     public ChatRoom roomFindById(Long chatRoomId) {
         EntityManager em = JpaUtil.getEntityManager();
         ChatRoom chatRoom = null;
-        try{
-            TypedQuery<ChatRoom> query = em.createQuery("SELECT cr FROM ChatRoom cr WHERE cr.id = :id", ChatRoom.class);
+        try {
+            TypedQuery<ChatRoom> query = em.createQuery(
+                    "SELECT cr FROM ChatRoom cr " +
+                            "LEFT JOIN FETCH cr.members crm " +  // ChatRoom -> ChatRoomMember
+                            "LEFT JOIN FETCH crm.member m " +   // ChatRoomMember -> Member
+                            "WHERE cr.id = :id",
+                    ChatRoom.class
+            );
             query.setParameter("id", chatRoomId);
             chatRoom = query.getSingleResult();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             JpaUtil.closeEntityManager(em);
         }
         return chatRoom;
     }
+
+
+
 }

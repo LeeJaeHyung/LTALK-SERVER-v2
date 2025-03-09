@@ -1,16 +1,19 @@
 package com.ltalk.server.service;
 
-import com.ltalk.server.entity.Chat;
-import com.ltalk.server.entity.ChatRoom;
-import com.ltalk.server.entity.ChatRoomMember;
-import com.ltalk.server.entity.Member;
+import com.ltalk.server.controller.ServerController;
+import com.ltalk.server.dto.ChatDTO;
+import com.ltalk.server.entity.*;
+import com.ltalk.server.enums.ProtocolType;
 import com.ltalk.server.repository.ChatRepository;
 import com.ltalk.server.repository.ChatRoomMemberRepository;
 import com.ltalk.server.repository.ChatRoomRepository;
 import com.ltalk.server.request.ChatRequest;
 import com.ltalk.server.request.ChatRoomCreatRequest;
+import com.ltalk.server.response.NewChatResponse;
 
+import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +32,25 @@ public class ChatService {
     }
 
 
-    public void chat(ChatRequest chatRequest) {
+    public void chat(ChatRequest chatRequest) throws NoSuchAlgorithmException, IOException {
         Member member = new MemberService(channel).findById(chatRequest.getSenderId());
         ChatRoom chatRoom = new ChatService(channel).roomFindById(chatRequest.getChatRoomId());
         Chat chat = new Chat(chatRoom, member, chatRequest.getMessage());
         chatRepository.save(chat);
+
+        String senderName = member.getUsername();
+        for(ChatRoomMember chatRoomMember : chatRoom.getMembers()){
+            String userName = chatRoomMember.getMember().getUsername();
+            if(userName.equals(senderName)){
+                continue;
+            }
+            Client client = ServerController.clients.get(userName);
+            if(client != null){
+                AsynchronousSocketChannel socketChannel = client.getSocketChannel();
+                DataService dataService = new DataService(socketChannel);
+                dataService.send(new ServerResponse(ProtocolType.NEW_CHAT, true, new NewChatResponse(new ChatDTO(chat, chatRequest.getChatRoomId()))));
+            }
+        }
     }
 
     private ChatRoom roomFindById(Long chatRoomId) {

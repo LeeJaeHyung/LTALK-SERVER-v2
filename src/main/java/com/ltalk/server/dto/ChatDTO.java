@@ -1,11 +1,13 @@
 package com.ltalk.server.dto;
 
 import com.ltalk.server.entity.Chat;
+import com.ltalk.server.entity.ChatRoom;
 
 import java.time.LocalDateTime;
 
 
 public class ChatDTO {
+    private long chatRoomId;
     private long chatId;
     private String sender;
     private String message;
@@ -16,5 +18,10 @@ public class ChatDTO {
         sender = chat.getSender().getUsername();
         message = chat.getMessage();
         createdAt = chat.getCreatedAt();
+    }
+
+    public ChatDTO (Chat chat, Long chatRoomId) {
+        this(chat);
+        this.chatRoomId = chatRoomId;
     }
 }

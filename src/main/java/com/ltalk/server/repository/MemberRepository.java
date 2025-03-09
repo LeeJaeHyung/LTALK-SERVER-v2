@@ -2,14 +2,13 @@ package com.ltalk.server.repository;
 
 import com.ltalk.server.entity.Chat;
 import com.ltalk.server.entity.ChatRoom;
+import com.ltalk.server.entity.ChatRoomMember;
 import com.ltalk.server.entity.Member;
 import com.ltalk.server.util.JpaUtil;
-import com.ltalk.server.entity.ChatRoomMember;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
-import java.util.HashSet;
 import java.util.List;
 
 public class MemberRepository {

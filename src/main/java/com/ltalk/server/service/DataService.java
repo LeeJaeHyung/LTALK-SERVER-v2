@@ -42,6 +42,10 @@ public class DataService {
        interpret();
     }
 
+    public DataService(AsynchronousSocketChannel socketChannel){
+        this.socketChannel = socketChannel;
+    }
+
     private void interpret() throws NoSuchAlgorithmException, IOException {
         switch(data.getProtocolType()){
             case LOGIN -> login();
@@ -94,7 +98,7 @@ public class DataService {
         ServerResponse loginResponse = memberService.login(new Member(data.getLoginRequest()));
         send(loginResponse);
     }
-    private void chat(){
+    private void chat() throws NoSuchAlgorithmException, IOException {
         chatService = new ChatService(socketChannel);
         chatService.chat(data.getChatRequest());
     }
@@ -104,7 +108,7 @@ public class DataService {
         send(signupResponse);
     }
 
-    private void send(ServerResponse response) {
+    public void send(ServerResponse response) {
         String json = gson.toJson(response);
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
         int messageLength = jsonBytes.length;
