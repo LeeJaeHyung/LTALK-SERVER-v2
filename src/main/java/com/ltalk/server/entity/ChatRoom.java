@@ -44,8 +44,9 @@ public class ChatRoom {
     @Column()
     private LocalDateTime lastChattedAt;
 
+    @OrderBy("readChatId ASC")
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.LAZY)
-    private Set<ChatRoomMember> members;
+    private List<ChatRoomMember> members;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chat> chats = new ArrayList<>();
@@ -54,7 +55,7 @@ public class ChatRoom {
     public ChatRoom(ChatRoomCreatRequest chatRoomCreatRequest) {
       this.type = chatRoomCreatRequest.getRoomType();
       this.name = chatRoomCreatRequest.getRoomName();
-      this.members = new HashSet<>();
+      this.members = new ArrayList<>();
       this.participantCount = 0;
     }
 

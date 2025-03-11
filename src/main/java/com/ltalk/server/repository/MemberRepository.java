@@ -9,6 +9,7 @@ import com.ltalk.server.util.JpaUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
+import java.util.Comparator;
 import java.util.List;
 
 public class MemberRepository {
@@ -100,10 +101,10 @@ public class MemberRepository {
 
         // `ChatRoom`만 먼저 조회 (chats는 별도로 가져옴)
         String queryStr = "SELECT DISTINCT m FROM Member m " +
-                "JOIN FETCH m.chatRooms crm " +
-                "JOIN FETCH crm.chatRoom cr " +
+                "LEFT JOIN FETCH m.chatRooms crm " + // LEFT JOIN FETCH 적용
+                "LEFT JOIN FETCH crm.chatRoom cr " +
                 "LEFT JOIN FETCH cr.members " +
-                "WHERE m.id = :memberId";
+                "WHERE m.id = :memberId ORDER BY crm.readChatId";
 
         TypedQuery<Member> query = em.createQuery(queryStr, Member.class);
         query.setParameter("memberId", memberId);
@@ -112,6 +113,7 @@ public class MemberRepository {
         // 각 `ChatRoom`의 최근 10개 메시지만 가져오기
         for (ChatRoom chatRoom : member.getChatRooms().stream().map(ChatRoomMember::getChatRoom).toList()) {
             List<Chat> recentChats = getRecentChatsForChatRoom(chatRoom.getChatRoomId(), em);
+
             for(Chat chats : recentChats) {
                 System.out.println(chats.getChatId());
             }
@@ -131,9 +133,12 @@ public class MemberRepository {
 
         TypedQuery<Chat> chatQuery = em.createQuery(chatQueryStr, Chat.class);
         chatQuery.setParameter("chatRoomId", chatRoomId);
-        chatQuery.setMaxResults(10); //  최신 10개 메시지만 가져오기
+        chatQuery.setMaxResults(100); //  최신 10개 메시지만 가져오기
+        List<Chat> chats = chatQuery.getResultList();
 
-        return chatQuery.getResultList();
+        // 가져온 후 오름차순으로 정렬하여 반환
+        chats.sort(Comparator.comparing(Chat::getChatId));
+        return chats;
     }
 
 

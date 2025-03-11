@@ -1,10 +1,7 @@
 package com.ltalk.server.entity;
 
 import com.ltalk.server.enums.ProtocolType;
-import com.ltalk.server.response.ChatResponse;
-import com.ltalk.server.response.LoginResponse;
-import com.ltalk.server.response.NewChatResponse;
-import com.ltalk.server.response.SignupResponse;
+import com.ltalk.server.response.*;
 import lombok.Getter;
 
 @Getter
@@ -15,6 +12,7 @@ public class ServerResponse {
     private LoginResponse loginResponse;
     private SignupResponse signupResponse;
     private NewChatResponse newChatResponse;
+    private ReadChatResponse readChatResponse;
 
     public ServerResponse(ProtocolType protocolType, boolean status, ChatResponse chatResponse) {
         this.protocolType = protocolType;
@@ -35,6 +33,12 @@ public class ServerResponse {
         this.protocolType = protocolType;
         this.status = status;
         this.newChatResponse = newChatResponse;
+    }
+
+    public ServerResponse(ProtocolType protocolType, boolean status, ReadChatResponse readChatResponse) {
+        this.protocolType = protocolType;
+        this.status = status;
+        this.readChatResponse = readChatResponse;
     }
 
 }

@@ -2,6 +2,7 @@ package com.ltalk.server.service;
 
 import com.ltalk.server.controller.ServerController;
 import com.ltalk.server.dto.ChatDTO;
+import com.ltalk.server.dto.ChatRoomMemberDTO;
 import com.ltalk.server.entity.*;
 import com.ltalk.server.enums.ProtocolType;
 import com.ltalk.server.repository.ChatRepository;
@@ -9,7 +10,9 @@ import com.ltalk.server.repository.ChatRoomMemberRepository;
 import com.ltalk.server.repository.ChatRoomRepository;
 import com.ltalk.server.request.ChatRequest;
 import com.ltalk.server.request.ChatRoomCreatRequest;
+import com.ltalk.server.request.ReadChatRequest;
 import com.ltalk.server.response.NewChatResponse;
+import com.ltalk.server.response.ReadChatResponse;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -42,6 +45,10 @@ public class ChatService {
         for(ChatRoomMember chatRoomMember : chatRoom.getMembers()){
             String userName = chatRoomMember.getMember().getUsername();
             if(userName.equals(senderName)){
+                System.out.println(userName+" : "+senderName);
+                System.out.println("chat.getChatId() : "+chat.getChatId());
+                chatRoomMember.setReadChatId(chat.getChatId());
+                chatRoomMemberRepository.update(chatRoomMember);
                 continue;
             }
             Client client = ServerController.clients.get(userName);
@@ -72,4 +79,22 @@ public class ChatService {
         chatRoom.setParticipantCount(chatRoomMemberList.size());
         chatRoomRepository.update(chatRoom);
     }
+
+    public void readChat(ReadChatRequest readChatRequest) {
+        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByMemberIdAndChatRoomId(readChatRequest.getMemberId(), readChatRequest.getChatRoomId());
+        chatRoomMember.setReadChatId(readChatRequest.getChatId());
+        chatRoomMemberRepository.update(chatRoomMember);
+        List<ChatRoomMember> chatRoomMemberList = chatRoomMemberRepository.findByChatRoomIdWithMember(readChatRequest.getChatRoomId());
+        for(ChatRoomMember member : chatRoomMemberList){
+            if(!member.getMember().getId().equals(readChatRequest.getMemberId())){
+                Client client = ServerController.clients.get(member.getMember().getUsername());
+                if(client != null){
+                    AsynchronousSocketChannel socketChannel = client.getSocketChannel();
+                    DataService dataService = new DataService(socketChannel);
+                    dataService.send(new ServerResponse(ProtocolType.READ_CHAT,true ,new ReadChatResponse(new ChatRoomMemberDTO(member))));
+                }
+            }
+        }
+    }
+
 }

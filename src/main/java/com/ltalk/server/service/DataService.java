@@ -54,7 +54,14 @@ public class DataService {
             case DISCONNECT -> disconnect();
             case REQUEST_FRIEND -> requestFriend();
             case CREATE_CHATROOM -> creatChatRoom();
+            case READ_CHAT -> readChat();
         }
+    }
+
+    private void readChat() {
+        System.out.println("readChat()실행");
+        chatService = new ChatService(socketChannel);
+        chatService.readChat(data.getReadChatRequest());
     }
 
     private void creatChatRoom() {

@@ -6,7 +6,7 @@ import com.ltalk.server.entity.Member;
 public class ChatRoomMemberDTO {
     private Long id;
     private Long memberId;
-    private Long chatRoomMemberId;
+    private Long chatRoomId;
     private String memberName;
     private Long readChatId;
 
@@ -14,7 +14,7 @@ public class ChatRoomMemberDTO {
         Member member =  chatRoomMember.getMember();
         id = chatRoomMember.getChatRoomMemberId();
         memberId = member.getId();
-        chatRoomMemberId = chatRoomMember.getChatRoomMemberId();
+        chatRoomId = chatRoomMember.getChatRoom().getChatRoomId();
         memberName = member.getUsername();
         readChatId = chatRoomMember.getReadChatId();
     }

@@ -13,5 +13,6 @@ public class Data {
     DisconnectRequest disconnectRequest;
     FriendRequest friendRequest;
     ChatRoomCreatRequest chatRoomCreatRequest;
+    ReadChatRequest readChatRequest;
     String username;
 }
