@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class ChatDTO {
     private long chatRoomId;
     private long chatId;
+    private Long senderId;
     private String sender;
     private String message;
     private LocalDateTime createdAt;
@@ -16,6 +17,7 @@ public class ChatDTO {
     public ChatDTO (Chat chat){
         chatId = chat.getChatId();
         sender = chat.getSender().getUsername();
+        senderId = chat.getSender().getId();
         message = chat.getMessage();
         createdAt = chat.getCreatedAt();
     }

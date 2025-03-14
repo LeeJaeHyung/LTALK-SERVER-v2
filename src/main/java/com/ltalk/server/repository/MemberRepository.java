@@ -133,7 +133,7 @@ public class MemberRepository {
 
         TypedQuery<Chat> chatQuery = em.createQuery(chatQueryStr, Chat.class);
         chatQuery.setParameter("chatRoomId", chatRoomId);
-        chatQuery.setMaxResults(100); //  최신 10개 메시지만 가져오기
+        chatQuery.setMaxResults(15); //  최신 10개 메시지만 가져오기
         List<Chat> chats = chatQuery.getResultList();
 
         // 가져온 후 오름차순으로 정렬하여 반환

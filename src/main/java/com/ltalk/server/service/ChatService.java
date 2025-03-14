@@ -11,6 +11,7 @@ import com.ltalk.server.repository.ChatRoomRepository;
 import com.ltalk.server.request.ChatRequest;
 import com.ltalk.server.request.ChatRoomCreatRequest;
 import com.ltalk.server.request.ReadChatRequest;
+import com.ltalk.server.response.ChatResponse;
 import com.ltalk.server.response.NewChatResponse;
 import com.ltalk.server.response.ReadChatResponse;
 
@@ -40,6 +41,8 @@ public class ChatService {
         ChatRoom chatRoom = new ChatService(channel).roomFindById(chatRequest.getChatRoomId());
         Chat chat = new Chat(chatRoom, member, chatRequest.getMessage());
         chatRepository.save(chat);
+        ChatDTO chatDTO = new ChatDTO(chat, chatRequest.getChatRoomId());
+        NewChatResponse chatResponse = new NewChatResponse(chatDTO);
 
         String senderName = member.getUsername();
         for(ChatRoomMember chatRoomMember : chatRoom.getMembers()){
@@ -49,13 +52,12 @@ public class ChatService {
                 System.out.println("chat.getChatId() : "+chat.getChatId());
                 chatRoomMember.setReadChatId(chat.getChatId());
                 chatRoomMemberRepository.update(chatRoomMember);
-                continue;
             }
             Client client = ServerController.clients.get(userName);
             if(client != null){
                 AsynchronousSocketChannel socketChannel = client.getSocketChannel();
                 DataService dataService = new DataService(socketChannel);
-                dataService.send(new ServerResponse(ProtocolType.NEW_CHAT, true, new NewChatResponse(new ChatDTO(chat, chatRequest.getChatRoomId()))));
+                dataService.send(new ServerResponse(ProtocolType.NEW_CHAT, true, chatResponse));
             }
         }
     }
@@ -81,17 +83,20 @@ public class ChatService {
     }
 
     public void readChat(ReadChatRequest readChatRequest) {
-        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByMemberIdAndChatRoomId(readChatRequest.getMemberId(), readChatRequest.getChatRoomId());
-        chatRoomMember.setReadChatId(readChatRequest.getChatId());
-        chatRoomMemberRepository.update(chatRoomMember);
-        List<ChatRoomMember> chatRoomMemberList = chatRoomMemberRepository.findByChatRoomIdWithMember(readChatRequest.getChatRoomId());
-        for(ChatRoomMember member : chatRoomMemberList){
-            if(!member.getMember().getId().equals(readChatRequest.getMemberId())){
+        Long readMemberId = readChatRequest.getMemberId();
+        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByMemberIdAndChatRoomId(readMemberId, readChatRequest.getChatRoomId());
+        if(!chatRoomMember.getReadChatId().equals(readChatRequest.getChatId())){
+            chatRoomMember.setReadChatId(readChatRequest.getChatId());
+            chatRoomMemberRepository.update(chatRoomMember);
+            System.out.println("업데이트 완료!");
+            List<ChatRoomMember> chatRoomMemberList = chatRoomMemberRepository.findByChatRoomIdWithMember(readChatRequest.getChatRoomId());
+            for(ChatRoomMember member : chatRoomMemberList){
                 Client client = ServerController.clients.get(member.getMember().getUsername());
                 if(client != null){
                     AsynchronousSocketChannel socketChannel = client.getSocketChannel();
                     DataService dataService = new DataService(socketChannel);
-                    dataService.send(new ServerResponse(ProtocolType.READ_CHAT,true ,new ReadChatResponse(new ChatRoomMemberDTO(member))));
+                    System.out.println(member.getMember().getUsername()+"한테 "+chatRoomMember.getMember().getUsername()+"가 읽었다고 보냄");
+                    dataService.send(new ServerResponse(ProtocolType.READ_CHAT,true ,new ReadChatResponse(new ChatRoomMemberDTO(chatRoomMember))));
                 }
             }
         }

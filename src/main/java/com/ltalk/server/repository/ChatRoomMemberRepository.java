@@ -29,12 +29,13 @@ public class ChatRoomMemberRepository {
         return true;
     }
 
-    public void update(ChatRoomMember chatRoomMember) {
+    public ChatRoomMember update(ChatRoomMember chatRoomMember) {
         EntityManager em = JpaUtil.getEntityManager();
         EntityTransaction transaction = em.getTransaction();
+        ChatRoomMember updatedMember = null;
         try {
             transaction.begin();
-            em.merge(chatRoomMember);
+            updatedMember = em.merge(chatRoomMember);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {
@@ -43,6 +44,7 @@ public class ChatRoomMemberRepository {
             e.printStackTrace();
         } finally {
             JpaUtil.closeEntityManager(em);
+            return updatedMember;
         }
     }
 
@@ -51,19 +53,20 @@ public class ChatRoomMemberRepository {
         ChatRoomMember chatRoomMember = null;
         try{
             TypedQuery<ChatRoomMember> query = em.createQuery(
-                    "SELECT crm FROM ChatRoomMember crm WHERE crm.chatRoom.id = :chatRoomId AND crm.member.id = :memberId",
+                    "SELECT crm FROM ChatRoomMember crm JOIN FETCH crm.member WHERE crm.chatRoom.id = :chatRoomId AND crm.member.id = :memberId",
                     ChatRoomMember.class
             );
             query.setParameter("chatRoomId", chatRoomId);
             query.setParameter("memberId", memberId);
             chatRoomMember = query.getSingleResult();
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
-        }finally {
+        } finally {
             JpaUtil.closeEntityManager(em);
         }
         return chatRoomMember;
     }
+
 
 
     public List<ChatRoomMember> findByChatRoomIdWithMember(Long chatRoomId) {
