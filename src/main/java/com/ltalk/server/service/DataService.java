@@ -2,6 +2,7 @@ package com.ltalk.server.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ltalk.server.controller.VoiceServerController;
 import com.ltalk.server.entity.Data;
 import com.ltalk.server.entity.Friend;
 import com.ltalk.server.entity.Member;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 
 import static com.ltalk.server.Main.viewController;
 import static com.ltalk.server.controller.ServerController.clients;
+import static com.ltalk.server.controller.VoiceServerController.voiceServerController;
 
 @Getter
 @Setter
@@ -55,8 +57,19 @@ public class DataService {
             case REQUEST_FRIEND -> requestFriend();
             case CREATE_CHATROOM -> creatChatRoom();
             case READ_CHAT -> readChat();
+            case CONNECT_VOICE_SERVER -> connectVoiceServer();
+            case CRATE_VOICE_SERVER -> creatVoiceServer();
         }
     }
+
+    private void creatVoiceServer() {
+        voiceServerController.creatVoiceServerController();
+    }
+
+    private void connectVoiceServer() {
+        new VoiceServerController(socketChannel);
+    }
+
 
     private void readChat() {
         System.out.println("readChat()실행");

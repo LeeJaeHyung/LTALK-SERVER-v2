@@ -15,4 +15,7 @@ public class Data {
     ChatRoomCreatRequest chatRoomCreatRequest;
     ReadChatRequest readChatRequest;
     String username;
+    public Data(ProtocolType protocolType) {
+        this.protocolType = protocolType;
+    }
 }
