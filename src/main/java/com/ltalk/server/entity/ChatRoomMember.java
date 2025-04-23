@@ -1,6 +1,7 @@
 package com.ltalk.server.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "chat_room_members")
 public class ChatRoomMember {
 
@@ -33,6 +35,11 @@ public class ChatRoomMember {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    public ChatRoomMember(Member member, ChatRoom chatRoom) {
+        this.member = member;
+        this.chatRoom = chatRoom;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -43,4 +50,5 @@ public class ChatRoomMember {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
 }

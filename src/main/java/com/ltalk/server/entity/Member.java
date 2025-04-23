@@ -1,6 +1,7 @@
 package com.ltalk.server.entity;
 
 
+import com.google.gson.annotations.Expose;
 import com.ltalk.server.config.PasswordEncoder;
 import com.ltalk.server.request.LoginRequest;
 import com.ltalk.server.request.SignupRequest;
@@ -32,7 +33,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatRoomMember> chatRooms = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,13 +1,15 @@
 package com.ltalk.server.entity;
 
-import com.ltalk.enums.FriendStatus;
+import com.ltalk.server.enums.FriendStatus;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "Friends")
 public class Friend {
     @Id
@@ -33,8 +35,5 @@ public class Friend {
         this.member = member;
         this.friend = friend;
         this.status = status;
-    }
-
-    public Friend() {
     }
 }

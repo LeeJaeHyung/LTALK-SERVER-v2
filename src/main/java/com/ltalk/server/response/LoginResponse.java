@@ -1,17 +1,23 @@
 package com.ltalk.server.response;
 
-import com.ltalk.entity.Member;
+import com.ltalk.server.dto.ChatRoomDTO;
+import com.ltalk.server.dto.FriendDTO;
+import com.ltalk.server.dto.MemberDTO;
+import com.ltalk.server.entity.Member;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class LoginResponse {
     private String msg;
-    private Member member;
+    private MemberDTO member;
+
 
     public LoginResponse(String msg){
         this.msg = msg;
     }
-    public LoginResponse(Member member, String msg) {
+    public LoginResponse(MemberDTO member, String msg) {
         this.member = member;
         this.msg = msg;
     }
