@@ -13,6 +13,8 @@ public class ServerResponse {
     private SignupResponse signupResponse;
     private NewChatResponse newChatResponse;
     private ReadChatResponse readChatResponse;
+    private VoiceServerIPResponse voiceServerIPResponse;
+    private CreateVoiceMemberResponse createVoiceMemberResponse;
 
     public ServerResponse(ProtocolType protocolType, boolean status, ChatResponse chatResponse) {
         this.protocolType = protocolType;
@@ -41,4 +43,15 @@ public class ServerResponse {
         this.readChatResponse = readChatResponse;
     }
 
+    public ServerResponse(VoiceServerIPResponse voiceServerIPResponse, boolean status) {
+        this.protocolType = ProtocolType.GET_VOICE_SERVER_IP;
+        this.status = status;
+        this.voiceServerIPResponse = voiceServerIPResponse;
+    }
+
+    public ServerResponse(CreateVoiceMemberResponse createVoiceMemberResponse, boolean status) {
+        this.protocolType = ProtocolType.RESPONSE_CREATE_CHATROOM_MEMBER;
+        this.createVoiceMemberResponse = createVoiceMemberResponse;
+        this.status = status;
+    }
 }

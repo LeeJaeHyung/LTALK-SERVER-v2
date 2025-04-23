@@ -2,11 +2,15 @@ package com.ltalk.server.controller;
 
 import com.ltalk.server.entity.Data;
 import com.ltalk.server.enums.ProtocolType;
-import com.ltalk.server.handler.WriteHandler;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static com.ltalk.server.service.DataService.gson;
 
@@ -14,39 +18,64 @@ public class VoiceServerController {
 
     public static AsynchronousSocketChannel voiceChannel = null;
     public static VoiceServerController voiceServerController = null;
+    public static boolean voiceServerIsRunning = false;
+    public static String voiceServerIp = null;
 
-    public VoiceServerController(AsynchronousSocketChannel voiceChannel) {
+    private static final BlockingQueue<ByteBuffer> writeQueue = new LinkedBlockingQueue<>();
+    private static volatile boolean writing = false;
+
+    public VoiceServerController(AsynchronousSocketChannel voiceChannel) throws IOException {
         VoiceServerController.voiceChannel = voiceChannel;
+        InetSocketAddress remoteAddress = (InetSocketAddress) voiceChannel.getRemoteAddress();
+        voiceServerIp = remoteAddress.getAddress().getHostAddress(); // "127.0.0.1"
         voiceServerController = this;
+        voiceServerIsRunning = true;
     }
 
     public void creatVoiceServerController() {
         sendVoiceServer(new Data(ProtocolType.CRATE_VOICE_SERVER));
     }
 
-    public void sendVoiceServer(Data data){
+    public static void sendVoiceServer(Data data) {
         String json = gson.toJson(data);
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
         int messageLength = jsonBytes.length;
 
-        // 전송할 데이터 크기 출력
         System.out.println("[응답 전송 : " + json + "]");
         System.out.println("[응답 사이즈 : " + messageLength + "]");
 
-        // 길이(4바이트) + JSON 데이터를 포함하는 ByteBuffer 생성
-        ByteBuffer responseBuffer = ByteBuffer.allocate(4 + messageLength);
-        responseBuffer.putInt(messageLength); // 4바이트 길이 정보 추가
-        responseBuffer.put(jsonBytes);        // 본문 데이터 추가
-        responseBuffer.flip(); // 버퍼를 읽을 수 있도록 준비
+        ByteBuffer buffer = ByteBuffer.allocate(4 + messageLength);
+        buffer.putInt(messageLength);
+        buffer.put(jsonBytes);
+        buffer.flip();
 
-        // 클라이언트에게 응답 전송 (길이 포함된 데이터)
-        voiceChannel.write(responseBuffer, responseBuffer, new WriteHandler(voiceChannel));
+        enqueueWrite(buffer);
     }
 
+    private static void enqueueWrite(ByteBuffer buffer) {
+        writeQueue.add(buffer);
+        tryWrite();
+    }
 
+    private static synchronized void tryWrite() {
+        if (writing) return;
 
+        ByteBuffer buffer = writeQueue.poll();
+        if (buffer == null) return;
 
+        writing = true;
+        voiceChannel.write(buffer, buffer, new CompletionHandler<>() {
+            @Override
+            public void completed(Integer result, ByteBuffer attachment) {
+                writing = false;
+                tryWrite();
+            }
 
-
-
+            @Override
+            public void failed(Throwable exc, ByteBuffer attachment) {
+                writing = false;
+                exc.printStackTrace();
+            }
+        });
+    }
 }
