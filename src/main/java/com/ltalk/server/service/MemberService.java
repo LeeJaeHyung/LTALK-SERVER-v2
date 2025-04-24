@@ -110,4 +110,8 @@ public class MemberService {
         return memberRepository.findById(id);
     }
 
+    public List<Member> findByFriend(String friendUsername){
+        return memberRepository.findByFriend(friendUsername);
+    }
+
 }

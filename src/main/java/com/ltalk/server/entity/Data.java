@@ -17,6 +17,8 @@ public class Data {
     ReadChatRequest readChatRequest;
     JoinVoiceChatRequest joinVoiceChatRequest;
     CreateVoiceMemberResponse createVoiceMemberResponse;
+    FriendSearchRequest friendSearchRequest;
+
     boolean status;
 
     String username;

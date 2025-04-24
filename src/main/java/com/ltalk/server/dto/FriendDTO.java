@@ -1,6 +1,7 @@
 package com.ltalk.server.dto;
 
 import com.ltalk.server.entity.Friend;
+import com.ltalk.server.entity.Member;
 import com.ltalk.server.enums.FriendStatus;
 
 public class FriendDTO {
@@ -12,5 +13,10 @@ public class FriendDTO {
         friendId = friend.getId();
         friendName = friend.getFriend().getUsername();
         status = friend.getStatus();
+    }
+
+    public FriendDTO(Member member){
+        friendId = member.getId();
+        friendName = member.getUsername();
     }
 }

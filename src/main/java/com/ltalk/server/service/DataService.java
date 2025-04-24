@@ -7,6 +7,7 @@ import com.ltalk.server.entity.*;
 import com.ltalk.server.enums.FriendStatus;
 import com.ltalk.server.handler.WriteHandler;
 import com.ltalk.server.response.CreateVoiceMemberResponse;
+import com.ltalk.server.response.FriendSearchResponse;
 import com.ltalk.server.response.VoiceServerIPResponse;
 import com.ltalk.server.util.LocalDateTimeAdapter;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.ltalk.server.Main.viewController;
 import static com.ltalk.server.controller.ServerController.clients;
@@ -60,7 +62,14 @@ public class DataService {
             case GET_VOICE_SERVER_IP -> getVoiceServerIP();
             case JOIN_VOICE_CHAT -> joinVoiceChat();
             case RESPONSE_CREATE_CHATROOM_MEMBER -> responseCreateChatRoomMember();
+            case FRIEND_SEARCH -> friendSearch();
         }
+    }
+
+    private void friendSearch() {
+        memberService = new MemberService(socketChannel);
+        List<Member> friendList = memberService.findByFriend(data.getFriendSearchRequest().getFriend_name());
+        send(new ServerResponse(new FriendSearchResponse(friendList)));
     }
 
     private void responseCreateChatRoomMember() {
@@ -97,19 +106,19 @@ public class DataService {
     private void requestFriend() {
         memberService = new MemberService(socketChannel);
         friendService = new FriendService();
-        String membername = data.getFriendRequest().getMember();
-        Member member = memberService.findByUserName(membername);
-        String friendname = data.getFriendRequest().getFriend();
-        Member friendMember = memberService.findByUserName(friendname);
+        String memberName = data.getFriendRequest().getMember();
+        Member member = memberService.findByUserName(memberName);
+        String friendName = data.getFriendRequest().getFriend();
+        Member friendMember = memberService.findByUserName(friendName);
         LocalDateTime requestTime = data.getFriendRequest().getRequestTime();
-        Friend friend1 = new Friend(member, friendMember, FriendStatus.ACCEPTED);
-        Friend friend2 = new Friend(friendMember, member, FriendStatus.ACCEPTED);
-        member.getFriends().add(friend1);
-        friendMember.getFriends().add(friend2);
-        memberService.update(member);
-        memberService.update(friendMember);
-//        friendService.addFriend(friend1, friend2);
-
+        if(!friendService.checkRequest(memberName, friendName)){
+            Friend friend1 = new Friend(member, friendMember, FriendStatus.ACCEPTED);
+            Friend friend2 = new Friend(friendMember, member, FriendStatus.PENDING);
+            member.getFriends().add(friend1);
+            friendMember.getFriends().add(friend2);
+            memberService.update(member);
+            memberService.update(friendMember);
+        }
     }
 
     private void disconnect() throws IOException {

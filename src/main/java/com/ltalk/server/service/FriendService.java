@@ -10,4 +10,8 @@ public class FriendService {
         friendRepository.save(friend1);
         friendRepository.save(friend2);
     }
+
+    public boolean checkRequest(String memberName, String friendName) {
+        return friendRepository.checkRequest(memberName,friendName);
+    }
 }

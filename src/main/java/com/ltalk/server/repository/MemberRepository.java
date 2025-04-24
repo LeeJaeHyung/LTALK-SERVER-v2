@@ -152,4 +152,20 @@ public class MemberRepository {
         }
         return member;
     }
+
+    public List<Member> findByFriend(String friendUsername) {
+        EntityManager em = JpaUtil.getEntityManager();
+        List<Member> members = null;
+        try {
+            TypedQuery<Member> query = em.createQuery(
+                    "SELECT m FROM Member m WHERE m.username LIKE :friendUsername", Member.class);
+            query.setParameter("friendUsername", "%"+friendUsername+"%");
+            members = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            JpaUtil.closeEntityManager(em);
+        }
+        return members;
+    }
 }

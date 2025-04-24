@@ -3,6 +3,7 @@ package com.ltalk.server.entity;
 import com.ltalk.server.enums.FriendStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class Friend {
     @JoinColumn(name = "friend_id", nullable = false) // 친구의 ID
     private Member friend;
 
+    @Setter
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private FriendStatus status = FriendStatus.PENDING;
