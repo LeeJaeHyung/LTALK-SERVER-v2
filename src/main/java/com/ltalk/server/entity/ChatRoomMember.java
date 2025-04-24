@@ -27,7 +27,7 @@ public class ChatRoomMember {
     private Member member; // Member 클래스와의 관계 설정
 
     @Column
-    private Long readChatId;
+    private Long readChatId = -1L;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

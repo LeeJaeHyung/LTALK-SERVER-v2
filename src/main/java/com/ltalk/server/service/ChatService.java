@@ -67,19 +67,24 @@ public class ChatService {
     }
 
     public void creatChatRoom(ChatRoomCreatRequest chatRoomCreatRequest){
-        ChatRoom chatRoom = new ChatRoom(chatRoomCreatRequest);
-        chatRoomRepository.save(chatRoom);
-        List<String> chatRoomMembers = chatRoomCreatRequest.getChatRoomMembers();
-        List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
-        MemberService memberService = new MemberService(channel);
-        for(String userName : chatRoomMembers){
-            Member member = memberService.findByUserName(userName);
-            ChatRoomMember chatRoomMember = new ChatRoomMember(member, chatRoom);
-            chatRoomMemberRepository.save(chatRoomMember);
-            chatRoomMemberList.add(chatRoomMember);
+        if(!chatRoomRepository.existsPrivateChatRoomWithTwoMembers(chatRoomCreatRequest.getChatRoomMembers().get(0),chatRoomCreatRequest.getChatRoomMembers().get(1))){
+
+            ChatRoom chatRoom = new ChatRoom(chatRoomCreatRequest);
+            chatRoomRepository.save(chatRoom);
+            List<String> chatRoomMembers = chatRoomCreatRequest.getChatRoomMembers();
+            List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
+            MemberService memberService = new MemberService(channel);
+            for(String userName : chatRoomMembers){
+                Member member = memberService.findByUserName(userName);
+                ChatRoomMember chatRoomMember = new ChatRoomMember(member, chatRoom);
+                chatRoomMemberRepository.save(chatRoomMember);
+                chatRoomMemberList.add(chatRoomMember);
+            }
+            chatRoom.setParticipantCount(chatRoomMemberList.size());
+            chatRoomRepository.update(chatRoom);
+        }else{
+            System.out.println("채팅방이 존재");
         }
-        chatRoom.setParticipantCount(chatRoomMemberList.size());
-        chatRoomRepository.update(chatRoom);
     }
 
     public void readChat(ReadChatRequest readChatRequest) {
