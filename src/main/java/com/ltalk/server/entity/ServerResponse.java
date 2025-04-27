@@ -16,6 +16,8 @@ public class ServerResponse {
     private VoiceServerIPResponse voiceServerIPResponse;
     private CreateVoiceMemberResponse createVoiceMemberResponse;
     private FriendSearchResponse friendSearchResponse;
+    private ChatRoomCreationCheckResponse chatRoomCreationCheckResponse;
+    private CreateChatRoomResponse createChatRoomResponse;
 
     public ServerResponse(ProtocolType protocolType, boolean status, ChatResponse chatResponse) {
         this.protocolType = protocolType;
@@ -59,5 +61,15 @@ public class ServerResponse {
     public ServerResponse(FriendSearchResponse friendSearchResponse) {
         this.protocolType = ProtocolType.FRIEND_SEARCH;
         this.friendSearchResponse = friendSearchResponse;
+    }
+
+    public ServerResponse(ChatRoomCreationCheckResponse chatRoomCreationCheckResponse) {
+        this.protocolType = ProtocolType.CAN_CREATE_CHAT_ROOM;
+        this.chatRoomCreationCheckResponse = chatRoomCreationCheckResponse;
+    }
+
+    public ServerResponse(ProtocolType protocolType, CreateChatRoomResponse createChatRoomResponse) {
+        this.protocolType = protocolType;
+        this.createChatRoomResponse = createChatRoomResponse;
     }
 }

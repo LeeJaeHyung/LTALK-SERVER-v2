@@ -66,9 +66,8 @@ public class ChatService {
         return chatRoomRepository.roomFindById(chatRoomId);
     }
 
-    public void creatChatRoom(ChatRoomCreatRequest chatRoomCreatRequest){
+    public ChatRoom creatChatRoom(ChatRoomCreatRequest chatRoomCreatRequest){
         if(!chatRoomRepository.existsPrivateChatRoomWithTwoMembers(chatRoomCreatRequest.getChatRoomMembers().get(0),chatRoomCreatRequest.getChatRoomMembers().get(1))){
-
             ChatRoom chatRoom = new ChatRoom(chatRoomCreatRequest);
             chatRoomRepository.save(chatRoom);
             List<String> chatRoomMembers = chatRoomCreatRequest.getChatRoomMembers();
@@ -80,10 +79,13 @@ public class ChatService {
                 chatRoomMemberRepository.save(chatRoomMember);
                 chatRoomMemberList.add(chatRoomMember);
             }
+            chatRoom.setMembers(chatRoomMemberList);
             chatRoom.setParticipantCount(chatRoomMemberList.size());
             chatRoomRepository.update(chatRoom);
+            return chatRoom;
         }else{
             System.out.println("채팅방이 존재");
+            return null;
         }
     }
 

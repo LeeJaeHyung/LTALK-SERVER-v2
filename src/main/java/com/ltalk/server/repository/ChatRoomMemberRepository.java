@@ -1,6 +1,7 @@
 package com.ltalk.server.repository;
 
 import com.ltalk.server.entity.ChatRoomMember;
+import com.ltalk.server.request.ChatRoomCreationCheckRequest;
 import com.ltalk.server.util.JpaUtil;
 
 import javax.persistence.EntityManager;

@@ -18,6 +18,8 @@ public class Data {
     JoinVoiceChatRequest joinVoiceChatRequest;
     CreateVoiceMemberResponse createVoiceMemberResponse;
     FriendSearchRequest friendSearchRequest;
+    ChatRoomCreationCheckRequest chatRoomCreationCheckRequest;
+    ChatRoomListRequest chatRoomListRequest;
 
     boolean status;
 

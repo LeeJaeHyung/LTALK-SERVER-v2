@@ -1,11 +1,13 @@
 package com.ltalk.server.repository;
 
 import com.ltalk.server.entity.Friend;
+import com.ltalk.server.entity.Member;
 import com.ltalk.server.enums.FriendStatus;
 import com.ltalk.server.util.JpaUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendRepository {
@@ -88,5 +90,54 @@ public class FriendRepository {
             JpaUtil.closeEntityManager(em);
         }
     }
+
+    public List<Friend> findMyFriendsWithoutPrivateChatRoom(Long memberId) {
+        EntityManager em = JpaUtil.getEntityManager();  // 너가 쓰는 EntityManager 팩토리
+        EntityTransaction tx = em.getTransaction();
+
+        List<Friend> result = new ArrayList<>();
+
+        try {
+            tx.begin();
+
+            String jpql = "SELECT f " +
+                    "FROM Friend f " +
+                    "WHERE f.member.id = :memberId " +
+                    "AND f.status = 'ACCEPTED' " +
+                    "AND EXISTS ( " +
+                    "   SELECT 1 " +
+                    "   FROM Friend f2 " +
+                    "   WHERE f2.member = f.friend " +   // 상대가 나를 친구로 등록
+                    "   AND f2.friend.id = :memberId " +
+                    "   AND f2.status = 'ACCEPTED' " +
+                    ") " +
+                    "AND NOT EXISTS ( " +
+                    "   SELECT crm1 " +
+                    "   FROM ChatRoomMember crm1 " +
+                    "   JOIN crm1.chatRoom cr " +
+                    "   JOIN cr.members crm2 " +
+                    "   WHERE crm1.member.id = :memberId " +
+                    "   AND crm2.member = f.friend " +
+                    "   AND cr.type = 'PRIVATE' " +
+                    "   AND SIZE(cr.members) = 2 " +
+                    ")";
+
+
+            result = em.createQuery(jpql, Friend.class)
+                    .setParameter("memberId", memberId)
+                    .getResultList();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+
+        return result;
+    }
+
+
 
 }

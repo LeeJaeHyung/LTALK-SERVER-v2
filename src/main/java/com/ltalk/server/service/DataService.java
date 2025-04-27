@@ -3,12 +3,17 @@ package com.ltalk.server.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ltalk.server.controller.VoiceServerController;
+import com.ltalk.server.dto.ChatRoomDTO;
+import com.ltalk.server.dto.FriendDTO;
 import com.ltalk.server.entity.*;
 import com.ltalk.server.enums.FriendStatus;
+import com.ltalk.server.enums.ProtocolType;
 import com.ltalk.server.handler.WriteHandler;
-import com.ltalk.server.response.CreateVoiceMemberResponse;
-import com.ltalk.server.response.FriendSearchResponse;
-import com.ltalk.server.response.VoiceServerIPResponse;
+import com.ltalk.server.repository.ChatRoomMemberRepository;
+import com.ltalk.server.repository.ChatRoomRepository;
+import com.ltalk.server.repository.FriendRepository;
+import com.ltalk.server.repository.MemberRepository;
+import com.ltalk.server.response.*;
 import com.ltalk.server.util.LocalDateTimeAdapter;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +24,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ltalk.server.Main.viewController;
@@ -63,7 +69,25 @@ public class DataService {
             case JOIN_VOICE_CHAT -> joinVoiceChat();
             case RESPONSE_CREATE_CHATROOM_MEMBER -> responseCreateChatRoomMember();
             case FRIEND_SEARCH -> friendSearch();
+            case CAN_CREATE_CHAT_ROOM -> canCreateChatRoom();
+            case CHATROOM_LIST -> chatRoomList();
         }
+    }
+
+    private void chatRoomList() {
+        MemberRepository memberRepository = new MemberRepository();
+        Member member = memberRepository.findMemberWithChatRooms(data.getChatRoomListRequest().getMemberId());
+        //여기 수정 필요
+    }
+
+    private void canCreateChatRoom() {
+        FriendRepository friendRepository = new FriendRepository();
+        List<Friend> friendList = friendRepository.findMyFriendsWithoutPrivateChatRoom(data.getChatRoomCreationCheckRequest().getId());
+        List<FriendDTO> friendDTOList = new ArrayList<>();
+        for (Friend friend : friendList) {
+            friendDTOList.add(new FriendDTO(friend));
+        }
+        send(new ServerResponse(new ChatRoomCreationCheckResponse(friendDTOList)));
     }
 
     private void friendSearch() {
@@ -100,7 +124,10 @@ public class DataService {
 
     private void creatChatRoom() {
         chatService = new ChatService(socketChannel);
-        chatService.creatChatRoom(data.getChatRoomCreatRequest());
+        ChatRoom chatRoom = chatService.creatChatRoom(data.getChatRoomCreatRequest());
+        if(chatRoom!=null){
+            send(new ServerResponse(ProtocolType.CREATE_CHATROOM,new CreateChatRoomResponse(new ChatRoomDTO(chatRoom))));
+        }
     }
 
     private void requestFriend() {
