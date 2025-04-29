@@ -2,7 +2,9 @@ package com.ltalk.server.dto;
 
 import com.ltalk.server.entity.ChatRoomMember;
 import com.ltalk.server.entity.Member;
+import lombok.Getter;
 
+@Getter
 public class ChatRoomMemberDTO {
     private Long id;
     private Long memberId;

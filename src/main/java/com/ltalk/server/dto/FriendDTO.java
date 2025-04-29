@@ -3,7 +3,9 @@ package com.ltalk.server.dto;
 import com.ltalk.server.entity.Friend;
 import com.ltalk.server.entity.Member;
 import com.ltalk.server.enums.FriendStatus;
+import lombok.Setter;
 
+@Setter
 public class FriendDTO {
     private Long friendId;
     private String friendName;

@@ -30,6 +30,7 @@ import java.util.List;
 import static com.ltalk.server.Main.viewController;
 import static com.ltalk.server.controller.ServerController.clients;
 import static com.ltalk.server.controller.VoiceServerController.*;
+import static com.ltalk.server.enums.ProtocolType.REQUEST_FRIEND;
 
 @Getter
 @Setter
@@ -70,15 +71,9 @@ public class DataService {
             case RESPONSE_CREATE_CHATROOM_MEMBER -> responseCreateChatRoomMember();
             case FRIEND_SEARCH -> friendSearch();
             case CAN_CREATE_CHAT_ROOM -> canCreateChatRoom();
-            case CHATROOM_LIST -> chatRoomList();
         }
     }
 
-    private void chatRoomList() {
-        MemberRepository memberRepository = new MemberRepository();
-        Member member = memberRepository.findMemberWithChatRooms(data.getChatRoomListRequest().getMemberId());
-        //여기 수정 필요
-    }
 
     private void canCreateChatRoom() {
         FriendRepository friendRepository = new FriendRepository();
@@ -126,7 +121,7 @@ public class DataService {
         chatService = new ChatService(socketChannel);
         ChatRoom chatRoom = chatService.creatChatRoom(data.getChatRoomCreatRequest());
         if(chatRoom!=null){
-            send(new ServerResponse(ProtocolType.CREATE_CHATROOM,new CreateChatRoomResponse(new ChatRoomDTO(chatRoom))));
+            chatService.sendCreateChatRoom(new ChatRoomDTO(chatRoom));
         }
     }
 
@@ -145,6 +140,8 @@ public class DataService {
             friendMember.getFriends().add(friend2);
             memberService.update(member);
             memberService.update(friendMember);
+            //친구 생성 정보를 전달해야함;
+            send(new ServerResponse(new RequestFriendResponse(new FriendDTO(friend1))));
         }
     }
 

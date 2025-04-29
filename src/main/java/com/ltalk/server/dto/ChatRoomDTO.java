@@ -1,11 +1,13 @@
 package com.ltalk.server.dto;
 
 import com.ltalk.server.entity.ChatRoom;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class ChatRoomDTO {
     private Long id;
     private String name;

@@ -2,6 +2,7 @@ package com.ltalk.server.service;
 
 import com.ltalk.server.controller.ServerController;
 import com.ltalk.server.dto.ChatDTO;
+import com.ltalk.server.dto.ChatRoomDTO;
 import com.ltalk.server.dto.ChatRoomMemberDTO;
 import com.ltalk.server.entity.*;
 import com.ltalk.server.enums.ProtocolType;
@@ -12,6 +13,7 @@ import com.ltalk.server.request.ChatRequest;
 import com.ltalk.server.request.ChatRoomCreatRequest;
 import com.ltalk.server.request.ReadChatRequest;
 import com.ltalk.server.response.ChatResponse;
+import com.ltalk.server.response.CreateChatRoomResponse;
 import com.ltalk.server.response.NewChatResponse;
 import com.ltalk.server.response.ReadChatResponse;
 
@@ -20,6 +22,8 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ltalk.server.controller.ServerController.clients;
 
 public class ChatService {
 
@@ -53,7 +57,7 @@ public class ChatService {
                 chatRoomMember.setReadChatId(chat.getChatId());
                 chatRoomMemberRepository.update(chatRoomMember);
             }
-            Client client = ServerController.clients.get(userName);
+            Client client = clients.get(userName);
             if(client != null){
                 AsynchronousSocketChannel socketChannel = client.getSocketChannel();
                 DataService dataService = new DataService(socketChannel);
@@ -98,7 +102,7 @@ public class ChatService {
             System.out.println("업데이트 완료!");
             List<ChatRoomMember> chatRoomMemberList = chatRoomMemberRepository.findByChatRoomIdWithMember(readChatRequest.getChatRoomId());
             for(ChatRoomMember member : chatRoomMemberList){
-                Client client = ServerController.clients.get(member.getMember().getUsername());
+                Client client = clients.get(member.getMember().getUsername());
                 if(client != null){
                     AsynchronousSocketChannel socketChannel = client.getSocketChannel();
                     DataService dataService = new DataService(socketChannel);
@@ -106,6 +110,17 @@ public class ChatService {
                     dataService.send(new ServerResponse(ProtocolType.READ_CHAT,true ,new ReadChatResponse(new ChatRoomMemberDTO(chatRoomMember))));
                 }
             }
+        }
+    }
+
+    public void sendCreateChatRoom(ChatRoomDTO chatRoomDTO){
+        for(ChatRoomMemberDTO chatRoomMemberDTO : chatRoomDTO.getMembers()){
+            Client client = clients.get(chatRoomMemberDTO.getMemberName());
+            if(client != null){//모든 클라이언트들에게 채팅방 생성 정보 전달
+                DataService dataService = new DataService(client.getSocketChannel());
+                dataService.send(new ServerResponse(ProtocolType.CREATE_CHATROOM,new CreateChatRoomResponse(chatRoomDTO)));
+            }
+
         }
     }
 
